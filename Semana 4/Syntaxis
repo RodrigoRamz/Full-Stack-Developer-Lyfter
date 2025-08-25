@@ -1,0 +1,349 @@
+## Solution:
+
+**Exercise #1.** 
+
+1. **string + string → ?**
+
+```python
+my_string = 'Restaurante'
+my_other_string = 'Panaderia'
+name_string = 'Casa Vieja'
+concatenate_string = f'{my_string} & {my_other_string} {name_string}'
+print (concatenate_string)
+```
+
+**Terminal:**
+
+/usr/local/bin/python3 "/Users/rhoderamirez/my_string = 'Restaurant'"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/my_string = 'Restaurant'"
+Restaurante & Panaderia Casa Vieja
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/my_string = 'Restaurant'"
+Restaurante & Panaderia Casa Vieja
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+**ii. string + int → ?**
+
+```python
+my_int = '37'
+my_string = 'My Age is '
+Age = my_string + my_int
+print (Age)
+```
+
+**Terminal:**
+
+/usr/local/bin/python3 "/Users/rhoderamirez/Int + String"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/Int + String"
+My Age is 37
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+**iii. int + string → ?**
+
+```python
+country_string = 'Costa Rica'
+date_int = 1821
+my_string = 'Independent since'
+concatenate_string = f' {country_string} {my_string} {date_int}'
+print (concatenate_string)
+```
+
+**Terminal:**
+
+/usr/local/bin/python3 "/Users/rhoderamirez/String + [Int.py](http://int.py/)"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/String + [Int.py](http://int.py/)"
+Costa Rica Independent since 1821
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+**i.v list + list → ?**
+
+```python
+my_first_list = ['Eggs', 'Bacon', 'Rib Eye']
+my_second_list = ['Coffee', 'Water', 'Orange Juice']
+print (my_first_list + my_second_list)
+```
+
+**Terminal:** 
+
+/usr/local/bin/python3 "/Users/rhoderamirez/List + [List.py](http://list.py/)"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/List + [List.py](http://list.py/)"
+['Eggs', 'Bacon', 'Rib Eye', 'Coffee', 'Water', 'Orange Juice']
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+v. string + list → ?
+
+```python
+my_string = 'My breakfast is '
+my_first_list = ['Cofee', 'Eggs', 'Bacon', 'Rib Eye']
+breakfast = my_string + str (my_first_list)
+print (breakfast)
+```
+
+Terminal: 
+
+/usr/local/bin/python3 "/Users/rhoderamirez/List + [List.py](http://list.py/)"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/List + [List.py](http://list.py/)"
+My breakfast is ['Cofee', 'Eggs', 'Bacon', 'Rib Eye']
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+vi. float + int → ?
+
+```python
+my_float = 40.55
+my_int = 20
+Result = my_float + my_int
+print (Result)
+```
+
+Terminal: 
+
+/usr/local/bin/python3 "/Users/rhoderamirez/float + [Int.py](http://int.py/)"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/float + [Int.py](http://int.py/)"
+60.55
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+vii. bool + bool → ?
+
+```python
+a = True
+b = False
+Result = a + b
+print (Result)
+```
+
+Terminal: 
+
+/usr/local/bin/python3 "/Users/rhoderamirez/bool + bool"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/bool + bool"
+1
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+Extra:
+
+Code: 
+
+```python
+my_first_list = ['Eggs', 'Bacon', 'Rib Eye']
+my_second_list = ['Coffee', 'Water', 'Orange Juice']
+concatenate_string = f" My Breakfast is {my_first_list [2]} and {my_second_list [0]}"
+print (concatenate_string)
+```
+
+**Terminal:**
+
+/usr/local/bin/python3 "/Users/rhoderamirez/List + [List.py](http://list.py/)"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/List + [List.py](http://list.py/)"
+My Breakfast is Rib Eye and Coffee
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+## Solution #2:
+
+1. Cree un programa que le pida al usuario su nombre, apellido, y edad, y muestre si es un bebé, niño, preadolescente, adolescente, adulto joven, adulto, o adulto mayor.
+
+name_string → Input()
+
+last_name_string → Input()
+
+age_int → int (Input ()) - Para que retorne un int, si solo deja Input solo retorna textos. 
+
+Print → que es? “muestre”
+
+```python
+name = input('Add your name ')
+last_name = input ('Add your last name ')
+age = int (input ('Add your age '))
+concatenate_string = (f' Your Name is ' + name + ' ' + last_name + ' ' + 'Your age is ' + str(age))
+print (concatenate_string)
+if (age <= 2):
+    print ('You are a Baby')
+elif (age <= 5):
+    print ('You are a child')
+elif (age <= 10):
+    print ('You are a preadolescent')
+elif (age <= 18):
+    print ('You are a Teenager')
+elif (age <= 25):
+    print ('You are an Adult')
+elif (age <= 65):
+    print ('You are a Senior')
+```
+
+Terminal:
+
+/usr/local/bin/python3 "/Users/rhoderamirez/Input + if = [elif.py](http://elif.py/)"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/Input + if = [elif.py](http://elif.py/)"
+Add your name rodrigo
+Add your last name ramirez
+Add your age 37
+Your Name is rodrigo ramirez Your age is 37
+You are a Senior
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+## Solution #3:
+
+- Cree programa no debe cerrarse hasta que el usuario adivine el numero.
+    1. Debe investigar cómo generar un número aleatorio distinto cada vez que se ejecute.
+
+Para generar un numero aleatorio se utiliza el modulo `random`
+
+```python
+1. Definir número secreto
+2. adivinado = False
+
+→ Mientras no haya adivinado:
+      Pedir número al usuario
+      Si el número es correcto:
+          Mostrar mensaje de éxito
+          Cambiar adivinado a True
+```
+
+Nota: los paréntesis en el `if` son **opcionales** en Python, aunque están permitidos.
+
+**Codigo:**
+
+```python
+import random
+guessed = False
+secret_number = random.randint(1, 10)
+while not guessed:
+    attempt = int (input('Try a Number from 1 to 10: '))
+    if attempt == secret_number:
+        print ('You Win! You Have guessed the secret number')
+        guessed = True
+    else:
+        print ('Try Again')
+```
+
+**Terminal:** 
+
+/usr/local/bin/python3 "/Users/rhoderamirez/Game Secret Number"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/Game Secret Number"
+Try a Number from 1 to 10: 4
+Try Again
+Try a Number from 1 to 10: 7
+Try Again
+Try a Number from 1 to 10:
+
+## Solution #4:
+
+1. Cree un programa que le pida tres números al usuario y muestre el mayor.
+
+Codigo #1:
+
+```python
+first_number = int(input('Add the first number: '))
+second_number = int(input('Add the second number: '))
+third_number = int(input('Add the third number: '))
+if first_number >= second_number and first_number > third_number:
+    highest = first_number
+elif second_number >= first_number and second_number > third_number:
+    highest = second_number
+else:
+    highest = third_number  
+print (f' The highest number is ' + str (highest))
+```
+
+Terminal:
+
+/usr/local/bin/python3 "/Users/rhoderamirez/Guess Numbers"
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/Guess Numbers"
+Add the first number: 4
+Add the second number: 5
+Add the third number: 6
+The highest number is 6
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+Codigo #2: (Improved - MAX  & {})
+
+```python
+first_number = int(input('Add the first number: '))
+second_number = int(input('Add the second number: '))
+third_number = int(input('Add the third number: '))
+Highest = max (first_number, second_number, third_number)
+print (f'The Highest Number is {Highest}')
+```
+
+Terminal:
+
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 "/Users/rhoderamirez/Highest Number"
+Add the first number: 8
+Add the second number: 5
+Add the third number: 3
+The Highest Number is 8
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+## Solution #5:
+
+1. Dada `n` cantidad de notas de un estudiante, calcular:
+    1. Cuantas notas tiene aprobadas (mayor a 70).
+    2. Cuantas notas tiene desaprobadas (menor a 70).
+    3. El promedio de todas.
+    4. El promedio de las aprobadas.
+    5. El promedio de las desaprobadas.
+
+Codigo:
+
+```python
+grades = int (input ('Add your number of grades to be added: '))
+results = []
+scores = []
+for i in range (grades):
+    score = int (input (f'Add Score {i + 1}: ' ))
+    scores.append(score)
+    if score >= 70:
+        print ('Approved')
+        results.append('Approved')
+    else:
+        print ('Unapproved')
+        results.append('Unapproved')
+total_approved = results.count('Approved')
+total_unapproved = results.count('Unapproved')
+print (f' Your Total Scores Approved are: {total_approved}')
+print (f' Your Total Scores Unapproved are: {total_unapproved}')
+average_score = sum(scores) / len (scores)
+print (f' Your average score is: {average_score: .0f}')
+total_score_approved = [s for r, s in zip(results, scores) if r == 'Approved']
+total_score_unapproved = [s for r, s in zip(results, scores) if r == 'Unapproved']
+average_score_approved = sum(total_score_approved) / len(total_score_approved)
+average_score_unapproved = sum( total_score_unapproved) / len (total_score_unapproved)
+print (f' Average Score Approved: {average_score_approved: .0f}')
+print (f' Average Score Unapproved: {average_score_unapproved: .0f}')
+```
+
+Terminal:
+
+rhoderamirez@Rhodes-MacBook-Pro ~ % /usr/local/bin/python3 /Users/rhoderamirez/Scores
+Add your number of grades to be added: 4
+Add Score 1: 60
+Unapproved
+Add Score 2: 90
+Approved
+Add Score 3: 50
+Unapproved
+Add Score 4: 80
+Approved
+Your Total Scores Approved are: 2
+Your Total Scores Unapproved are: 2
+Your average score is:  70
+Average Score Approved:  85
+Average Score Unapproved:  55
+rhoderamirez@Rhodes-MacBook-Pro ~ %
+
+**Notes:**
+
+n es una convención matematica, universalmente comprendido en programación. 
+
+se debe crear una lista para guardar los resultados y así realizar los otros calculos
+
+Para generar un bucle n cantidad de veces se utiliza el comando range. 
+
+Para iniciar un bucle varias veces o n cantidad de veces se utiliza el for en lugar de un while (se usa while cuando se necesita cumplir una condición)
+
+se utiliza i como contador de cuantas veces se a repetido el bucle (iteración)
+
+- `for`: **Para cada uno**...
+- `i`: una variable que va cambiando de valor (es como un **contador** o índice)
+- `in range(grades)`: dentro del **rango** desde `0` hasta **uno menos que `grades`**
+
+### 🔗 2. ¿Qué hace `zip()`?
+
+**`zip()`** toma dos o más listas y **las empareja elemento por elemento**, creando tuplas (pares o grupos). La **comprensión de listas** (list comprehension). Sirve para crear una nueva lista filtrando y transformando elementos. `[s for r, s in zip(...) if ...]`

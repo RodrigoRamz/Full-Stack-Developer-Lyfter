@@ -1,0 +1,120 @@
+Recomendamos varios colores para definir condiciones, `acciones`, listas y funciones:
+
+- Recomendamos el color fondo verde para declarar el inicio.
+- Fondo rojo para definir el fin.
+- Condiciones de `si`, en verde, `sino` en rojo.
+- Condiciones `o` y `y` en morado.
+- Funciones `mientras` en naranja.
+- La `lista` o `viñetas` enumerada en azul y `sub viñetas` en rosa.
+
+<aside>
+💡
+
+Ejercicios
+
+1. Cree un pseudocódigo que le pida un `precio de producto` al usuario, calcule su descuento y muestre el precio final tomando en cuenta que:
+    1. Si el precio es menor a 100, el descuento es del 2%.
+    2. Si el precio es mayor o igual a 100, el descuento es del 10%.
+    3. *Ejemplos*:
+        1. 120 → 108
+        2. 40 → 39.2
+2. Cree un pseudocódigo que le pida un `tiempo en segundos` al usuario y calcule si es menor o mayor a 10 minutos. Si es menor, muestre cuantos segundos faltarían para llegar a 10 minutos. Si es mayor, muestre “*Mayor*”. Si es exactamente igual, muestre “*Igual*”.
+    1. *Ejemplos*:
+        1. 1040 → Mayor
+        2. 140 → 460
+        3. 600 → Igual
+        4. 599 → 1
+3. Cree un algoritmo que le pida un numero al usuario, y realice una suma de cada numero del 1 hasta ese número ingresado. Luego muestre el resultado de la suma.
+    1. 3 → 6 (1 + 2 + 3)
+    2. 5 → 15 (1 + 2 + 3 + 4 + 5)
+    3. 12 → 78 (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12)
+</aside>
+
+Solucion
+
+Ejecicio 1:
+
+1. Inicio
+2. Definir `Precio_de_producto`
+3. Definir `Descuento`
+4. Definir `Precio_con_descuento`
+5. Mostrar “Ingrese Precio de Producto”
+6. Pedir `Precio_de_producto`
+7. Si (`Precio_de_producto` < 100) entonces
+
+       a. `Descuento` =`Precio_de_producto` * 0.02
+
+1. Sino
+
+       a. `Descuento` =`Precio_de_producto` * 0.10
+
+1. FinSi
+2. `Precio_con_descuento` = `Precio_de_producto` - `Descuento`
+3. Mostrar “Precio de Producto con Descuento es”
+4. Mostrar `Precio_con_descuento`
+5. Fin
+
+Ejercicio 2:
+
+1. Inicio
+2. Definir `tiempo_en_segundos`
+3. Definir `resultado`
+4. Definir `tiempo_faltante`
+5. Mostrar “Ingrese tiempo en segundos”
+6. Pedir `tiempo_en_segundos`
+7. Si `tiempo_en_segundos` > 600 seg entonces
+
+       a. `resultado` = “Mayor”
+
+           i.  Mostrar “Su tiempo en segundos es”
+
+           ii. Muestre “Mayor” 
+
+1. Sino 
+
+       a. `resultado` = “Menor”
+
+           i.  Mostrar “Su tiempo en segundos es”
+
+           ii. Muestre “Menor”
+
+1. FinSi
+2. Si `resultado` = “Menor” entonces
+
+        a. `tiempo_faltante` = 600 seg - `tiempo_en_segundos` 
+
+            i. Muestre “Tiempo en Segundos Faltantes”
+
+            ii. Mostrar `tiempo_faltante`
+
+1. FinSi
+2. Si `tiempo_en_segundos` = 600 seg entonces
+
+       a. `resultado` = “Igual”
+
+          i.  Mostrar “Su tiempo en segundos es”
+
+          ii. Muestre “Igual”
+
+1. FinSi
+2. Fin
+
+Ejercicio 3:
+
+1. Inicio
+2. Definir `numero`
+3. Definir `contador`
+4. Definir `suma_total`
+5. `suma_total` = 0
+6. Mustre “Agregue un numero”
+7. Pedir `numero` → 8
+8.  Mientras `contador`  ≤ `numero` hacer
+
+        a. `suma_total` = `suma_total` + `contador` 
+
+        b. `contador` = `contador` + 1  (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)
+
+1. FinMientras
+2. Muestre “Resultado de Suma”
+3. Mostrar `suma_total` → 36
+4. Fin
