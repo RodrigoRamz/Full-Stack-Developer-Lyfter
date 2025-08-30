@@ -1,5 +1,0 @@
-Hola
-mundo
-esto
-Es
-Python
