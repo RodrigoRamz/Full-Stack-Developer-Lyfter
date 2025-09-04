@@ -32,9 +32,9 @@ def main(): #database: dictionary list
         elif option == '4':
             global_average(students)
         elif option == '5':
-            export_csv(students)
+            export_csv(students, route=csv_path, fieldnames=fieldnames)
         elif option == '6':
-            import_csv(students)
+            import_csv(students, route=csv_path, fieldnames=fieldnames)
 
 
 if __name__ == '__main__':
