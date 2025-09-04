@@ -3,7 +3,6 @@
 
 from menu import show_menu, read_valid_option
 from actions import (
-    read_student, 
     add_students, 
     listing, 
     top3, 
@@ -13,9 +12,10 @@ from data import export_csv, import_csv
 
 def main(): #database: dictionary list
     students = [] #valid options 0-6
-    valid_options = {'0', '1', '2', '3', '4', '5', '6'}
-
-    #menu loop: repeated until the user chose No to exit (break)
+    csv_path = 'students.csv' 
+    fieldnames = ('name', 'group', 'spanish', 'english', 'geography', 'sciences') #this variables are now locals and not globals in data.py 
+    
+    valid_options = {'0', '1', '2', '3', '4', '5', '6'} #menu loop: repeated until the user chose No to exit (break)
     while True:
         show_menu()
         option = read_valid_option(valid_options)

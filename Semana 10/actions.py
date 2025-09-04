@@ -51,8 +51,8 @@ def add_students(students): #allow adding n students, register is added by .appe
                 break
 
 
-def student_average_grade(e): #Average grade from the 4 signature
-    return (e['spanish'] + e['english'] + e['geography'] + e['sciences']) / 4
+def student_average_grade(s): #Average grade from the 4 signature
+    return (s['spanish'] + s['english'] + s['geography'] + s['sciences']) / 4
 
 
 def listing(students): #print all students in a table format
@@ -61,11 +61,11 @@ def listing(students): #print all students in a table format
         return
     print('\nName     Group spa eng geo sci avg')
     print('_'*70)
-    for e in students:
-        avg = student_average_grade(e)
+    for s in students:
+        avg = student_average_grade(s)
         print(
-            f'{e['name'][:30]:30} {e['group'][:8]:8}'
-            f'{e['spanish']:>3} {e['english']:>3} {e['geography']:>3} {e['sciences']:>3} {avg:5.2f}'
+            f"{s['name'][:30]:30} {s['group'][:8]:8}"
+            f"{s['spanish']:>3} {s['english']:>3} {s['geography']:>3} {s['sciences']:>3} {avg:5.2f}"
         )
 
 
@@ -78,13 +78,13 @@ def top3(students): #show the top 3 best average grades
     print('\nTop 3')
     print('Rank Name.     Group Avg')
     print('_'*50)
-    for i, e in enumerate(top, start=1):
-        print(f'{i:>4} {e['name'][:30]:30} {e['group'][:8]:8} {student_average_grade(e):>5.2f}')
+    for i, s in enumerate(top, start=1):
+        print(f"{i:>4} {s['name'][:30]:30} {s['group'][:8]:8} {student_average_grade(s):>5.2f}")
 
 
 def global_average(students): #calculate the global average all grades
     if not students:
         print('There is no data for global average.')
         return
-    average_grade = [student_average_grade(e) for e in students]
+    average_grade = [student_average_grade(s) for s in students]
     print(f'Global Average: {sum(average_grade) / len(average_grade):.2f}') 
