@@ -3,6 +3,11 @@ import math
 
 class Circle: #class
     def __init__(self, radius): #constructor
+        if not isinstance(radius, (int, float)): #validates the data type (variable or argument)
+            raise TypeError("The radius should be a number")
+        if radius <= 0:
+            raise TypeError("The radius should be higher than 0")
+        
         self.radius = radius #attribute
 
 

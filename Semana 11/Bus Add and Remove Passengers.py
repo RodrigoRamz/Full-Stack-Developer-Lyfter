@@ -7,7 +7,10 @@ class Bus: #class
         self.max_passengers = max_passengers #attributes
         self.passengers = [] #empty list
 
-    def load_passenger(self, passenger): #method #load the bus
+    def load_passenger(self, passenger): #method #load the bus #validates the person instance
+        if not isinstance(passenger, Person):
+            raise TypeError("Only Person instances can board the bus")
+        
         if len(self.passengers) < self.max_passengers:
             self.passengers.append(passenger) #ACTION add a passenger in passenger list
             print (f'{passenger.name} got on the Bus')
