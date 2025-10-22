@@ -4,9 +4,10 @@ def log_params_and_return(func):
         result = func(*args, **kwargs)
         print(f"Returned value: {result}")
         return result
+    return wrapper
     
 @log_params_and_return
-def suma(a, b):
+def add(a, b):
     return a + b
 
-suma(5, 3)
+add(5, 3)
