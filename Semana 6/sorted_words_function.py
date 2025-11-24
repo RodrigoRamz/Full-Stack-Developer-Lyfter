@@ -3,5 +3,5 @@ def sorted_words(text):
     words = sorted(words)
     return '-'.join(words)
 
-result = sorted_words('python-variable-funcion-computadora-monitor')
+result = sorted_words('python-variable-function-computer-monitor')
 print(result)

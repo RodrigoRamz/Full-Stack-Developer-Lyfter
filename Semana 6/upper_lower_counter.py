@@ -6,6 +6,9 @@ def letters(text):
             upper_count += 1
         elif c.islower():
             lower_count += 1
-    print(f'{lower_count} are lower cases and {upper_count} are upper cases')
+    return lower_count, upper_count
 
-letters ('I love Nacion Sushi')
+if __name__ == "__main__":
+    lower, upper = letters("I love Nation Sushi")
+    print(f'{lower} are lower cases and {upper} are upper cases')
+
