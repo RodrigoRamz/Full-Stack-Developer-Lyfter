@@ -7,12 +7,15 @@ class Transaction:
         - Date is noy Empty
         - Transaction_type INCOME / EXPENDITURE
         """
-        self.title = title
-        if not title:
+        title_clean = (title or "").strip()
+        if not title_clean:
             raise ValueError("Transaction title cannot be empty")
         
-        self.amount = float(amount)
-        if not isinstance (amount, (int, float)):
+        self.title = title_clean
+        
+        try:
+            self.amount = float(amount)
+        except (TypeError, ValueError):
             raise ValueError("Amount must be a numeric value")
         
         self.transaction_type = transaction_type
