@@ -13,7 +13,7 @@ CREATE TABLE products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     code TEXT NOT NULL,
     name TEXT NOT NULL,
-    price INTEGER NOT NULL,
+    price FLOAT NOT NULL,
     brand TEXT
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE invoices (
     invoice_number TEXT UNIQUE NOT NULL,
     purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     buyer_email TEXT NOT NULL,
-    total_amount INTEGER NOT NULL
+    total_amount FLOAT NOT NULL
 );
 
 -- INVOICE ITEMS (relate the products with the invoice)
