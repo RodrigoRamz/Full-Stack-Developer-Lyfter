@@ -25,7 +25,7 @@ VALUES ('Home', 'Home appliances');
 -- Update products table with category
 UPDATE products SET category_id = 1 WHERE id = 1;
 UPDATE products SET category_id = 2 WHERE id = 2;
-UPDATE products SET category_id = 1 WHERE id = 3;
+UPDATE products SET category_id = 3 WHERE id = 3;
 
 -- Verify Products
 SELECT id, name AS product_name, price, quantity, category_id
@@ -36,7 +36,7 @@ INSERT INTO products (code, name, price, brand)
 VALUES ('P010', 'Apple MacBook', 120000, 'Apple');
 
 INSERT INTO products (code, name, price, brand)
-VALUES ('P011''Apple Mouse', 25000, 'Apple');
+VALUES ('P011', 'Apple Mouse', 25000, 'Apple');
 
 INSERT INTO products (code, name, price, brand)
 VALUES ('P012', 'Samsung TV', 80000, 'Samsung');
@@ -100,9 +100,8 @@ UPDATE products SET quantity = 0 WHERE price <= 0;
 -- Decrease quantity in a specific product
 UPDATE products SET quantity = quantity - 1 WHERE id = 1;
 
--- Verify Results
-SELECT * FROM products ORDER BY id ASC LIMIT 10;
-
 -- Increase price to 100 when quantity < 10
 UPDATE products SET price = price + 100 WHERE quantity < 10;
 
+-- Verify Results
+SELECT * FROM products ORDER BY id ASC LIMIT 10;
