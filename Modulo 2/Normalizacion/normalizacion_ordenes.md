@@ -1,7 +1,5 @@
 
 ### Tabla Original
-|Order ID|Customer Name|Customer Phone|Address|Item ID|Price|Quantity|Special Request|Delivery Time|
-|---|---|---|---|---|---|---|---|---|---|
 
 | Order ID | Customer Name | Customer Phone | Address        | Item ID | Item Name    | Price | Quantity | Special Request | Delivery Time |
 | -------- | ------------- | -------------- | -------------- | ------- | ------------ | ----- | -------- | --------------- | ------------- |
@@ -17,7 +15,7 @@
 
 Para eliminar redundancia.
 
-Cada columna debe tener datos atomicos
+Cada columna debe tener valores atomicos
 Cada registro debe ser un dato identificable
 
 Primary Key: (Order ID, Item ID)
