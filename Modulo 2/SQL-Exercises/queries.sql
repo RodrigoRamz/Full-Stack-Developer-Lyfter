@@ -15,7 +15,7 @@ CREATE TABLE products (
     name TEXT NOT NULL,
     price FLOAT NOT NULL,
     brand TEXT
-);
+)
 
 -- INVOICES
 CREATE TABLE invoices (

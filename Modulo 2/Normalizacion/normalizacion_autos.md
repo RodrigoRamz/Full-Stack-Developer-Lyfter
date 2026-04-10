@@ -21,23 +21,51 @@ La columna Owner ID determina: Owner Name, Owner Phone
 Se debe separa las tablas
 
 Cars Table
-|VIN|Make|Model|Year|Color|
+
+| VIN         | Make      | Model  | Year | Color  | 
+| ----------- | --------- | ------ | ---- | ------ |
+| 1HGCM82633A | Honda     | Accord | 2003 | Silver |
+| 1HGCM82633A | Honda     | Accord | 2003 | Silver |
+| 5J6RM4H79EL | Honda     | CR-V   | 2014 | Blue   |
+| 1G1RA6EH1FU | Chevrolet | Volt   | 2015 | Red    |
 
 Owners Table
-|Owner ID|Owner Name|Owner Phone|
+| Owner ID | Owner Name | Owner Phone  |
+| -------- | ---------- | ------------ |
+| 101      | Alice      | 123-456-7890 |
+| 102      | Bob        | 987-654-3210 |
+| 103      | Claire     | 555-123-4567 |
+| 104      | Dave       | 111-222-3333 |
 
 CarsOwners Table
-|VIN|Owner ID|
+
+| VIN         | Owner ID |
+|-------------|----------|
+| 1HGCM82633A | 101      |
+| 1HGCM82633A | 102      |
+| 5J6RM4H79EL | 103      |
+| 1G1RA6EH1FU | 104      |
 
 ### 3FN
 
 La columan Insurance Company se separa en una tabla nueva para evitar redundancias
 
 InsuranceCompanies Table
-|Company ID|Name|
+|Company ID|Name         |
+|----------|-------------|
+|1         |ABC Insurance|
+|2         |XYZ Insurance|
+|3         |DEF Insurance|
+|4         |GHI Insurance|
 
 InsurancePolicies Table
-|Policy ID|VIN|Company ID|
+| Policy ID | VIN         | Company ID |
+| --------- | ----------- | ---------- |
+| POL12345  | 1HGCM82633A | 1          |
+| POL54321  | 1HGCM82633A | 2          |
+| POL67890  | 5J6RM4H79EL | 3          |
+| POL98765  | 1G1RA6EH1FU | 4          |
+
 
 Tablas Normalizadas:
 - Cars
