@@ -72,10 +72,9 @@ JOIN Authors a ON b.Author = a.ID;
 
 2. Selecciones los Libros que no tienen autor
 
-SELECT b.Name, a.Name
+SELECT b.Name,
 FROM Books b
-LEFT JOIN Authors a ON b.Author = a.ID 
-WHERE a.ID IS NULL;
+WHERE b.Authors IS NULL;
 
 3. Seleccion los Autores que no tienen Libros
 
