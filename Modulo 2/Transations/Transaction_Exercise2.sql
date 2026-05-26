@@ -1,10 +1,13 @@
 DO $$
 DECLARE
-    -- Variable ro validate user existence 
+    -- Variable to validate user existence 
     v_user_exists INTEGER;
 
-    --- Variable to store product stock
-    v_stock INTEGER;
+    -- Variable to iterate through products
+    item RECORD;
+
+    -- Variable to calculate bill total
+    v_bill_total DECIMAL (10, 2);
 
 BEGIN
     -- Validate if the user exists
@@ -17,50 +20,81 @@ BEGIN
         RAISE EXCEPTION 'User does not exist';
     END IF;
 
-    -- Validate product stock
-    SELECT stock
-    INTO v_stock
-    FROM products
-    WHERE product_id = 'P001';
-    
-    IF v_stock < 2 THEN
-        RAISE EXCEPTION 'Insufficient stock';
-    END IF;
+    -- Temporary table to simulate multiple purchased products
+    CREATE TEMP TABLE temp_purchase_items (
+        product_id VARCHAR(50),
+        quantity INTEGER
+    ) ON COMMIT DROP;
 
--- Create Bill
-INSERT INTO bills (
-    bill_id,
-    user_id,
-    total,
-    status
-)
-VALUES (    
-    'B001',
-    'U001',
-    50.00,
-    'Paid'
-);
+    -- Products included in the purchase
+    INSERT INTO temp_purchase_items (product_id, quantity)
+    VALUES
+    ('P001', 2),
+    ('P002', 1);
 
--- Create bill items
-INSERT INTO bill_items (
-    bill_id,
-    product_id,
-    quantity,
-    subtotal
-)
-VALUES (
-    'B001',
-    'P001',
-    2,
-    50.00
-);
+    -- Validate stock for all products    
+    FOR item IN
+        SELECT 
+            t.product_id, 
+            t.quantity, 
+            t.stock, 
+            p.price
+        FROM temp_purchase_items t 
+        JOIN products p 
+            ON p.product_id = t.product_id
+    LOOP
+        IF items.stock < items.quantity THEN
+            RAISE EXCEPTION
+            'Insufficient stock product %', 
+            item.product_id;
+        END IF;
 
--- Reduce product stock
-UPDATE products
-SET stock = stock - 2
-WHERE product_id = 'P001';
+    END LOOP;
 
--- Purchase confirmation
-RAISE NOTICE 'Purchase Completed Successfully';
+    -- Calculate total bill amount
+    SELECT SUM(t.quanity * p.price)
+    INTO v_bill_total
+    FROM temp_purchase_items t
+    JOIN products p 
+        ON p.product_id = t.product_id;
+
+    -- Create Bill
+    INSERT INTO bills (
+        bill_id, 
+        user_id, 
+        total, 
+        status
+    )
+    VALUES (
+        'B001', 
+        'U001', 
+        v_bill_total,
+        'Paid'
+    );
+
+    -- Create bill items for all products
+    INSERT INTO bill_items (
+        bill_id, 
+        product_id, 
+        quantity, 
+        subtotal
+    )
+    SELECT 
+        'B001',
+        t.product_id,
+        t.quantity,
+        t.quantity * p.price
+    FROM temp_purchase_items t
+    JOIN products p 
+        ON p.product_id = t.product_id;
+
+    -- Reduce stock for all purchased products
+    UPDATE products p
+    SET stock = p.stock - t.quantity
+    FROM temp_purchase_items t
+    WHERE p.product_id = t.product_id;
+
+    -- Purchase Confirmation
+    RAISE NOTICE 'Purchase Completed Successfully';
 
 END $$;

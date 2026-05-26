@@ -20,7 +20,7 @@ CREATE TABLE bills (
     bill_id VARCHAR(50) PRIMARY KEY,
     user_id VARCHAR(50) NOT NULL REFERENCES users(user_id),
     total DECIMAL (10, 2) NOT NULL CHECK (total >= 0),
-    status VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('Paid', 'Returned')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

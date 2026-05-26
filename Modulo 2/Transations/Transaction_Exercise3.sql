@@ -1,50 +1,53 @@
 DO $$
 DECLARE
 
-    v_bill_exists INTEGER;
+    -- Variable to store bill status
     v_bill_status VARCHAR(20);
-    v_quantity INTEGER;
+
+    -- Variable to iterate through bill items
+    item RECORD;
 
 BEGIN
 
-    -- Verify that the bill exists
-    SELECT COUNT(*)
-    INTO v_bill_exists
-    FROM bills
-    WHERE bill_id = 'B001';
-
-    IF v_bill_exists = 0 THEN
-        RAISE EXCEPTION 'Bill does not exist';
-    END IF;
-
-    -- Verify bill status
+    -- Verify bill exists and obtain status
     SELECT status
     INTO v_bill_status
     FROM bills
     WHERE bill_id = 'B001';
 
-    IF v_bill_status = 'Returned' THEN
-        RAISE EXCEPTION 'Bill already returned';
+    -- Validate bill existence
+    IF v_bill_status IS NULL THEN
+        RAISE EXCEPTION 'Bill does not exist';
     END IF;
 
-    -- Obtain purchased quantity
-    SELECT quantity
-    INTO v_quantity
-    FROM bill_items
-    WHERE bill_id = 'B001'
-    AND product_id = 'P001';
+    -- Validate if bill was already returned
+    IF v_bill_status = 'Returned' THEN
+        RAISE EXCEPTION 'Bill already returned';
+    END IF
 
-    -- Increase Stock
-    UPDATE products
-    SET stock = stock + v_quantity
-    WHERE product_id = 'P001';
+    -- Iterate through all products from the bill
+    FOR item IN
+        SELECT product_id, 
+        quantity
+        FROM bill_items 
+        WHERE bill_id = 'B001'
+    LOOP
 
-    -- Mark Bill as returned
+    -- Restore stock for each product
+        UPDATE products
+        SET stock = stock + item.quantity
+        WHERE product_id = item.product_id;
+    
+    END LOOP;
+
+    -- Mark bill as returned
     UPDATE bills
     SET status = 'Returned'
     WHERE bill_id = 'B001';
 
-    -- Confirmation message
-    RAISE NOTICE 'Product return completed successfully';
+    -- Return confirmation  
+    RAISE NOTICE 'Product return completed successfully';   
 
 END $$;
+
+
