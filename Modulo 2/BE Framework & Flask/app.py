@@ -20,7 +20,7 @@ def write_tasks(tasks):
 
 def find_task_by_id(tasks, task_id):
     for task in tasks:
-        if task["id"] == task_id:
+        if str(task["id"]) == str(task_id):
             return task
     return None
 
@@ -55,18 +55,23 @@ def get_tasks():
 @app.route("/tasks", methods=["POST"])
 def create_task():
     tasks = read_tasks()
-    data = request.json
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({"message": "Invalid JSON body"}), 400
 
     error = validate_task_data(data)
+
     if error:
         return jsonify({"message": error}), 400
 
-    existing_task = find_task_by_id(tasks, data["id"])
+    existing_task = find_task_by_id(tasks, str(data["id"]))
+
     if existing_task:
         return jsonify({"message": "Task id already exists"}), 400
 
     new_task = {
-        "id": data["id"],
+        "id": str(data["id"]),
         "title": data["title"],
         "description": data["description"],
         "status": data["status"]
@@ -80,9 +85,13 @@ def create_task():
 @app.route("/tasks/<task_id>", methods=["PUT"])
 def update_task(task_id):
     tasks = read_tasks()
-    data = request.json
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({"message": "Invalid JSON body"}), 400
 
     task = find_task_by_id(tasks, task_id)
+
     if not task:
         return jsonify({"message": "Task not found"}), 404
     
@@ -93,18 +102,19 @@ def update_task(task_id):
 
     if "description" in data:
         if not data["description"]:
-            return jsonify({"description": "Task description cannot be empty"}), 400
+            return jsonify({"message": "Task description cannot be empty"}), 400
+        
         task["description"] = data["description"]
 
     if "status" in data:
         if data["status"] not in VALID_STATUS:
-            return jsonify({"status": "Invalid task status"}), 400
+            return jsonify({"message": "Invalid task status"}), 400
+        
         task["status"] = data["status"]
 
     write_tasks(tasks)
 
     return jsonify({"message": "Task updated successfully", "data": task}), 200
-
 
 @app.route("/tasks/<task_id>", methods=["DELETE"])
 def delete_task(task_id):
@@ -121,5 +131,3 @@ def delete_task(task_id):
     
 if __name__ == "__main__":
     app.run(host="localhost", port=8000, debug=True)
-
-
