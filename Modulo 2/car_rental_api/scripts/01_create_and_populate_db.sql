@@ -11,7 +11,8 @@ CREATE TABLE lyfter_car_rental.users (
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
     birth_date DATE NOT NULL,
-    account_status VARCHAR(20) NOT NULL DEFAULT 'active'
+    account_status VARCHAR(20) NOT NULL DEFAULT 'active',
+    is_delinquent BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE lyfter_car_rental.cars (

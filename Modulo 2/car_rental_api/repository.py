@@ -3,7 +3,7 @@ class UserRepository:
         self.db_manager = db_manager
 
 
-    def __format__user(self, user):
+    def _format_user(self, user):
         return{
             "id": user[0],
             "full_name": user[1],
@@ -12,12 +12,13 @@ class UserRepository:
             "password": user [4],
             "birth_date": str(user [5]),
             "account_status": user[6],
+            "is_delinquent": user[7],
 
         }
     
     def get_all(self, filters=None):
             query = """
-                SELECT id, full_name, email, username, password, birth_date, account_status
+                SELECT id, full_name, email, username, password, birth_date, account_status, is_delinquent
                 FROM lyfter_car_rental.users
             """
 
@@ -34,7 +35,7 @@ class UserRepository:
 
             results = self.db_manager.execute_query(query, tuple(params))
 
-            return [self.__format__user(user) for user in results]
+            return [self._format_user(user) for user in results]
     
     def create(
         self,
@@ -77,7 +78,7 @@ class UserRepository:
     def flag_delinquent(self, user_id):
         query = """
             UPDATE lyfter_car_rental.users
-            SET account_status = 'delinquent'
+            SET is_delinquent = TRUE
             Where id = %s;
         """
 
@@ -261,7 +262,21 @@ class RentalRepository:
 
         return True
     
-    def complete_rental(self, rental_id, car_id):
+    def complete_rental(self, rental_id):
+        rental_result = self.db_manager.execute_query(
+            """
+            SELECT car_id
+            FROM lyfter_car_rental.rentals
+            WHERE id = %s;
+            """,
+            (rental_id,)
+        )
+
+        if not rental_result:
+            return False
+
+        car_id = rental_result[0][0]
+
         update_rental_query = """
             UPDATE lyfter_car_rental.rentals
             SET rental_status = 'completed'
@@ -274,7 +289,7 @@ class RentalRepository:
             WHERE id = %s;
         """
 
-        self.db_manager.execute_query(update_rental_query, (rental_id,))
-        self.db_manager.execute_query(update_car_query, (car_id,))
-
-        return True
+        return self.db_manager.execute_transaction([
+            (update_rental_query, (rental_id)),
+            (update_car_query, (car_id))
+        ])

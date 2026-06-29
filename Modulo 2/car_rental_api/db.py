@@ -30,6 +30,19 @@ class PgManager:
             return self.cursor.fetchall()
         return None
     
+    def execute_transaction(self, queries):
+        try:
+            for query, params in queries:
+                self.cursor.execute(query, params)
+
+            self.connection.commit()
+            return True
+        
+        except Exception as error:
+            self.connection.rollback()
+            print("Transaction error:", error)
+            return False
+    
     def close_connection(self):
         self.cursor.close()
         self.connection.close()    
