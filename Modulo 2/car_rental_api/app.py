@@ -164,16 +164,20 @@ def create_rental():
     if error:
         return {"error": error}, 400
 
-    rental_id = rental_repository.create(
+    result = rental_repository.create(
         body["user_id"],
         body["car_id"],
         body["returning_date"],
         body.get("rental_status", "active")
     )
 
+    if not result:
+        return {
+            "error": "Car is not available or does not exist."
+        }, 400
+
     return {
-        "message": "Rental created successfully",
-        "rental_id": rental_id
+        "message": "Rental created successfully"
     }, 201
 
 

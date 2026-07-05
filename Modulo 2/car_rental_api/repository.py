@@ -9,7 +9,6 @@ class UserRepository:
             "full_name": user[1],
             "email": user[2],
             "username": user[3],
-            "password": user [4],
             "birth_date": str(user [5]),
             "account_status": user[6],
             "is_delinquent": user[7],
@@ -224,7 +223,25 @@ class RentalRepository:
         returning_date,
         rental_status="active"
     ):
-        query = """
+
+        car_result = self.db_manager.execute_query(
+            """
+            SELECT car_status
+            FROM lyfter_car_rental.cars
+            WHERE id = %s;
+            """,
+            (car_id,)
+        )
+
+        if not car_result:
+            return False
+
+        car_status = car_result[0][0]
+
+        if car_status != "available":
+            return False
+
+        insert_rental_query = """
             INSERT INTO lyfter_car_rental.rentals
             (
                 user_id,
@@ -232,21 +249,25 @@ class RentalRepository:
                 returning_date,
                 rental_status
             )
-            VALUES (%s, %s, %s, %s)
-            RETURNING id;
+            VALUES (%s, %s, %s, %s);
         """
 
-        result = self.db_manager.execute_query(
-            query,
-            (
-                user_id,
-                car_id,
-                returning_date,
-                rental_status
-            )
-        )
+        update_car_query = """
+            UPDATE lyfter_car_rental.cars
+            SET car_status = 'rented'
+            WHERE id = %s;
+        """
 
-        return result[0][0]
+        return self.db_manager.execute_transaction([
+            (
+                insert_rental_query,
+                (user_id, car_id, returning_date, rental_status)
+            ),
+            (
+                update_car_query,
+                (car_id,)
+            )
+        ])
     
     def update_status(self, rental_id, rental_status):
         query = """
@@ -290,6 +311,6 @@ class RentalRepository:
         """
 
         return self.db_manager.execute_transaction([
-            (update_rental_query, (rental_id)),
-            (update_car_query, (car_id))
+            (update_rental_query, (rental_id,)),
+            (update_car_query, (car_id,))
         ])

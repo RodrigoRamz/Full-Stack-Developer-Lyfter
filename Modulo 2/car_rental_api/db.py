@@ -37,7 +37,7 @@ class PgManager:
 
             self.connection.commit()
             return True
-        
+
         except Exception as error:
             self.connection.rollback()
             print("Transaction error:", error)
