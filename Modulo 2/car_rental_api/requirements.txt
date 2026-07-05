@@ -1,0 +1,4 @@
+flask -- to create the API
+psycopg2-binary -- to connect Python with PostgreSQL
+
+
