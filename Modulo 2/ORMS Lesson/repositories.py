@@ -1,3 +1,6 @@
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+
 from db import SessionLocal
 from models import User, Car, Address
 
@@ -40,6 +43,9 @@ class UserRepository:
 
             if user is None:
                 return False
+            
+            if user.addresses or user.cars:
+                return False
 
             session.delete(user)
             session.commit()
@@ -48,7 +54,14 @@ class UserRepository:
 
     def get_all_users(self):
         with SessionLocal() as session:
-            return session.query(User).all()
+            statement = select(User).options(
+                selectinload(User.addresses),
+                selectinload(User.cars)
+            )
+
+            result = session.execute(statement)
+
+            return result.scalars().all()
 
 
 class CarRepository:
@@ -107,13 +120,19 @@ class CarRepository:
 
     def get_all_cars(self):
         with SessionLocal() as session:
-            return session.query(Car).all()
+            statement = select(Car).options(
+                selectinload(Car.user)
+            )
+
+            result = session.execute(select(statement))
+            return result.scalars().all()
 
     def assign_car_to_user(self, car_id, user_id):
         with SessionLocal() as session:
             car = session.get(Car, car_id)
+            user = session.get(User, user_id)
 
-            if car is None:
+            if car is None or user is None:
                 return None
 
             car.user_id = user_id
@@ -181,4 +200,9 @@ class AddressRepository:
 
     def get_all_addresses(self):
         with SessionLocal() as session:
-            return session.query(Address).all()
+            statement = select(Address).options(
+                selectinload(Address.user)
+            )
+            result = session.execute(statement)
+            
+            return result.scalars().all()
