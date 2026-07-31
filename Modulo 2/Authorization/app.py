@@ -1,14 +1,18 @@
 from pathlib import Path
+from datetime import date
 
 from flask import Flask, jsonify, request
 
 from jwt_manager import JWTManager
-from repositories import UserRepository
+from repositories import InvoiceRepository, ProductRepository, UserRepository
+from auth_decorators import role_required, token_required
 
 
 app = Flask("authorization-service")
 
 user_repository = UserRepository()
+product_repository = ProductRepository()
+invoice_repository = InvoiceRepository()
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -32,22 +36,16 @@ def register():
 
     username = data.get("username")
     password = data.get("password")
-    role = data.get("role", "user")
 
     if not username or not password:
         return jsonify(
             error="Username and password are required"
         ), 400
 
-    if role not in ("admin", "user"):
-        return jsonify(
-            error="Role must be 'admin' or 'user'"
-        ), 400
-
     user = user_repository.create_user(
         username=username,
         password=password,
-        role=role
+        role="user"
     )
 
     if user is None:
@@ -125,27 +123,8 @@ def login():
 
 
 @app.route("/me", methods=["GET"])
-def me():
-    authorization_header = request.headers.get("Authorization")
-
-    if not authorization_header:
-        return jsonify(
-            error="Authorization header is required"
-        ), 403
-
-    if not authorization_header.startswith("Bearer "):
-        return jsonify(
-            error="Authorization header must use Bearer token"
-        ), 403
-
-    token = authorization_header.replace("Bearer ", "", 1)
-
-    decoded = jwt_manager.decode(token)
-
-    if decoded is None:
-        return jsonify(
-            error="Invalid or expired token"
-        ), 403
+@token_required(jwt_manager)
+def me(decoded):
 
     user_id = decoded.get("id")
 
@@ -165,6 +144,246 @@ def me():
         id=user.id,
         username=user.username,
         role=user.role
+    ), 200
+
+
+@app.route("/products", methods=["POST"])
+@role_required(jwt_manager, "admin")
+def create_product(decoded):
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify(error="JSON body is required"), 400
+
+    required_fields = [
+        "name",
+        "price",
+        "entry_date",
+        "quantity"
+    ]
+
+    for field in required_fields:
+        if field not in data:
+            return jsonify(
+                error=f"{field} is required"
+            ), 400
+
+    try:
+        entry_date = date.fromisoformat(data["entry_date"])
+    except ValueError:
+        return jsonify(
+            error="entry_date must use YYYY-MM-DD format"
+        ), 400
+
+    product = product_repository.create_product(
+        name=data["name"],
+        price=data["price"],
+        entry_date=entry_date,
+        quantity=data["quantity"]
+    )
+
+    return jsonify(
+        product={
+            "id": product.id,
+            "name": product.name,
+            "price": float(product.price),
+            "entry_date": str(product.entry_date),
+            "quantity": product.quantity
+        }
+    ), 201
+
+
+@app.route("/products", methods=["GET"])
+@role_required(jwt_manager, "admin")
+def get_products(decoded):
+
+    products = product_repository.get_all_products()
+
+    return jsonify(
+        products=[
+            {
+                "id": product.id,
+                "name": product.name,
+                "price": float(product.price),
+                "entry_date": str(product.entry_date),
+                "quantity": product.quantity
+            }
+            for product in products
+        ]
+    ), 200
+
+
+@app.route("/products/<int:product_id>", methods=["GET"])
+@role_required(jwt_manager, "admin")
+def get_product(decoded, product_id):
+
+    product = product_repository.get_product_by_id(product_id)
+
+    if product is None:
+        return jsonify(error="Product not found"), 404
+
+    return jsonify(
+        product={
+            "id": product.id,
+            "name": product.name,
+            "price": float(product.price),
+            "entry_date": str(product.entry_date),
+            "quantity": product.quantity
+        }
+    ), 200
+
+
+@app.route("/products/<int:product_id>", methods=["PUT"])
+@role_required(jwt_manager, "admin")
+def update_product(decoded, product_id):
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify(error="JSON body is required"), 400
+
+    if "entry_date" in data:
+        try:
+            data["entry_date"] = date.fromisoformat(data["entry_date"])
+        except ValueError:
+            return jsonify(
+                error="entry_date must use YYYY-MM-DD format"
+            ), 400
+
+    product = product_repository.update_product(
+        product_id=product_id,
+        name=data.get("name"),
+        price=data.get("price"),
+        entry_date=data.get("entry_date"),
+        quantity=data.get("quantity")
+    )
+
+    if product is None:
+        return jsonify(error="Product not found"), 404
+
+    return jsonify(
+        product={
+            "id": product.id,
+            "name": product.name,
+            "price": float(product.price),
+            "entry_date": str(product.entry_date),
+            "quantity": product.quantity
+        }
+    ), 200
+
+
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+@role_required(jwt_manager, "admin")
+def delete_product(decoded, product_id):
+    deleted = product_repository.delete_product(product_id)
+
+    if not deleted:
+        return jsonify(error="Product not found"), 404
+
+    return jsonify(
+        message="Product deleted successfully"
+    ), 200
+
+
+@app.route("/purchases", methods=["POST"])
+@token_required(jwt_manager)
+def create_purchase(decoded):
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify(error="JSON body is required"), 400
+
+    user_id = decoded.get("id")
+    items = data.get("items")
+
+    if user_id is None:
+        return jsonify(error="Token does not contain a user ID"), 401
+
+    if not items:
+        return jsonify(error="items are required"), 400
+
+    invoice, error = invoice_repository.create_purchase(
+        user_id=user_id,
+        items=items
+    )
+
+    if error:
+        return jsonify(error=error), 400
+
+    return jsonify(
+        invoice={
+            "id": invoice.id,
+            "user_id": invoice.user_id,
+            "purchase_date": str(invoice.purchase_date),
+            "total": float(invoice.total)
+        }
+    ), 201
+
+
+@app.route("/invoices/<int:invoice_id>", methods=["GET"])
+@token_required(jwt_manager)
+def get_invoice(decoded, invoice_id):
+
+    invoice = invoice_repository.get_invoice_by_id(invoice_id)
+
+    if invoice is None:
+        return jsonify(error="Invoice not found"), 404
+    
+    if (
+        decoded.get("role") != "admin"
+        and invoice.user_id != decoded.get("id")
+    ):
+        return jsonify(error="Forbidden"), 403
+
+    return jsonify(
+        invoice={
+            "id": invoice.id,
+            "user_id": invoice.user_id,
+            "purchase_date": str(invoice.purchase_date),
+            "total": float(invoice.total),
+            "items": [
+                {
+                    "product_id": item.product_id,
+                    "quantity": item.quantity,
+                    "unit_price": float(item.unit_price),
+                    "subtotal": float(item.subtotal)
+                }
+                for item in invoice.items
+            ]
+        }
+    ), 200
+
+
+@app.route("/invoices", methods=["GET"])
+@token_required(jwt_manager)
+def get_user_invoices(decoded):
+    user_id = decoded.get("id")
+
+    if user_id is None:
+        return jsonify(
+            error="Token does not contain a user ID"
+        ), 401
+
+    invoices = invoice_repository.get_invoices_by_user_id(user_id)
+
+    return jsonify(
+        invoices=[
+            {
+                "id": invoice.id,
+                "user_id": invoice.user_id,
+                "purchase_date": str(invoice.purchase_date),
+                "total": float(invoice.total),
+                "items": [
+                    {
+                        "product_id": item.product_id,
+                        "quantity": item.quantity,
+                        "unit_price": float(item.unit_price),
+                        "subtotal": float(item.subtotal)
+                    }
+                    for item in invoice.items
+                ]
+            }
+            for invoice in invoices
+        ]
     ), 200
 
 if __name__ == "__main__":

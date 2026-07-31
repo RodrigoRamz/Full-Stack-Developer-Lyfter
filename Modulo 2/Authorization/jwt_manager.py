@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
 import jwt
 
@@ -23,8 +24,11 @@ class JWTManager:
 
     def encode(self, data):
         try:
+            payload = data.copy()
+            payload["exp"] = datetime.now(timezone.utc) + timedelta(hours=1)
+
             return jwt.encode(
-                data,
+                payload,
                 self.private_key,
                 algorithm=self.algorithm
             )
