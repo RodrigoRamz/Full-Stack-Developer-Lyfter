@@ -63,10 +63,15 @@ class ProductRepository:
             )
 
             session.add(product)
-            session.commit()
-            session.refresh(product)
 
-            return product
+            try:
+                session.commit()
+                session.refresh(product)
+                return product
+            
+            except IntegrityError:
+                session.rollback()
+                return None
 
     def get_all_products(self):
         with SessionLocal() as session:
@@ -89,7 +94,7 @@ class ProductRepository:
             product = session.get(Product, product_id)
 
             if product is None:
-                return None
+                return None, "Product not found"
 
             if name is not None:
                 product.name = name
@@ -103,10 +108,14 @@ class ProductRepository:
             if quantity is not None:
                 product.quantity = quantity
 
-            session.commit()
-            session.refresh(product)
+            try:
+                session.commit()
+                session.refresh(product)
+                return product, None
 
-            return product
+            except IntegrityError:
+                session.rollback()
+                return None, "Invalid product data"
         
     def delete_product(self, product_id):
         with SessionLocal() as session:
@@ -141,6 +150,17 @@ class InvoiceRepository:
             total = 0
 
             for item in items:
+                if not isinstance(item, dict):
+                    session.rollback()
+                    return None, "Each item must be a JSON Object"
+                
+                required_fields =("product_id", "quantity")
+
+                for field in required_fields:
+                    if field not in item:
+                        session.rollback()
+                        return None, f"{field} is required for each item"
+                    
                 product_id = item["product_id"]
                 requested_quantity = item["quantity"]
 

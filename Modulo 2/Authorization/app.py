@@ -24,7 +24,9 @@ jwt_manager = JWTManager(
 
 @app.route("/liveness")
 def liveness():
-    return jsonify(message="Authorization service is running"), 200
+    return jsonify(
+        message="Authorization service is running"
+    ), 200
 
 
 @app.route("/register", methods=["POST"])
@@ -98,7 +100,7 @@ def login():
     if user is None:
         return jsonify(
             error="Invalid username or password"
-        ), 403
+        ), 401
 
     token = jwt_manager.encode(
         {
@@ -125,7 +127,6 @@ def login():
 @app.route("/me", methods=["GET"])
 @token_required(jwt_manager)
 def me(decoded):
-
     user_id = decoded.get("id")
 
     if user_id is None:
@@ -170,7 +171,7 @@ def create_product(decoded):
 
     try:
         entry_date = date.fromisoformat(data["entry_date"])
-    except ValueError:
+    except (TypeError, ValueError):
         return jsonify(
             error="entry_date must use YYYY-MM-DD format"
         ), 400
@@ -181,6 +182,11 @@ def create_product(decoded):
         entry_date=entry_date,
         quantity=data["quantity"]
     )
+
+    if product is None:
+        return jsonify(
+            error="Invalid product data"
+        ), 400
 
     return jsonify(
         product={
@@ -196,7 +202,6 @@ def create_product(decoded):
 @app.route("/products", methods=["GET"])
 @role_required(jwt_manager, "admin")
 def get_products(decoded):
-
     products = product_repository.get_all_products()
 
     return jsonify(
@@ -216,7 +221,6 @@ def get_products(decoded):
 @app.route("/products/<int:product_id>", methods=["GET"])
 @role_required(jwt_manager, "admin")
 def get_product(decoded, product_id):
-
     product = product_repository.get_product_by_id(product_id)
 
     if product is None:
@@ -243,13 +247,15 @@ def update_product(decoded, product_id):
 
     if "entry_date" in data:
         try:
-            data["entry_date"] = date.fromisoformat(data["entry_date"])
-        except ValueError:
+            data["entry_date"] = date.fromisoformat(
+                data["entry_date"]
+            )
+        except (TypeError, ValueError):
             return jsonify(
                 error="entry_date must use YYYY-MM-DD format"
             ), 400
 
-    product = product_repository.update_product(
+    product, error = product_repository.update_product(
         product_id=product_id,
         name=data.get("name"),
         price=data.get("price"),
@@ -257,8 +263,11 @@ def update_product(decoded, product_id):
         quantity=data.get("quantity")
     )
 
-    if product is None:
-        return jsonify(error="Product not found"), 404
+    if error == "Product not found":
+        return jsonify(error=error), 404
+
+    if error:
+        return jsonify(error=error), 400
 
     return jsonify(
         product={
@@ -296,10 +305,14 @@ def create_purchase(decoded):
     items = data.get("items")
 
     if user_id is None:
-        return jsonify(error="Token does not contain a user ID"), 401
+        return jsonify(
+            error="Token does not contain a user ID"
+        ), 401
 
     if not items:
-        return jsonify(error="items are required"), 400
+        return jsonify(
+            error="items are required"
+        ), 400
 
     invoice, error = invoice_repository.create_purchase(
         user_id=user_id,
@@ -322,12 +335,11 @@ def create_purchase(decoded):
 @app.route("/invoices/<int:invoice_id>", methods=["GET"])
 @token_required(jwt_manager)
 def get_invoice(decoded, invoice_id):
-
     invoice = invoice_repository.get_invoice_by_id(invoice_id)
 
     if invoice is None:
         return jsonify(error="Invoice not found"), 404
-    
+
     if (
         decoded.get("role") != "admin"
         and invoice.user_id != decoded.get("id")
@@ -363,7 +375,9 @@ def get_user_invoices(decoded):
             error="Token does not contain a user ID"
         ), 401
 
-    invoices = invoice_repository.get_invoices_by_user_id(user_id)
+    invoices = invoice_repository.get_invoices_by_user_id(
+        user_id
+    )
 
     return jsonify(
         invoices=[
@@ -385,6 +399,7 @@ def get_user_invoices(decoded):
             for invoice in invoices
         ]
     ), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
