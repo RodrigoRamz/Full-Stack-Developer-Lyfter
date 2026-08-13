@@ -1,12 +1,13 @@
 from pathlib import Path
 from datetime import date
+import json
 
 from flask import Flask, jsonify, request
 
 from jwt_manager import JWTManager
 from repositories import InvoiceRepository, ProductRepository, UserRepository
 from auth_decorators import role_required, token_required
-
+from cache import cache_manager
 
 app = Flask("authorization-service")
 
@@ -217,24 +218,36 @@ def get_products(decoded):
         ]
     ), 200
 
-
 @app.route("/products/<int:product_id>", methods=["GET"])
 @role_required(jwt_manager, "admin")
 def get_product(decoded, product_id):
+    cache_key = f"product:{product_id}"
+
+    cached_product = cache_manager.get_data(cache_key)
+
+    if cached_product is not None:
+        return jsonify(product=json.loads(cached_product)), 200
+
     product = product_repository.get_product_by_id(product_id)
 
     if product is None:
         return jsonify(error="Product not found"), 404
 
-    return jsonify(
-        product={
-            "id": product.id,
-            "name": product.name,
-            "price": float(product.price),
-            "entry_date": str(product.entry_date),
-            "quantity": product.quantity
-        }
-    ), 200
+    product_data = {
+        "id": product.id,
+        "name": product.name,
+        "price": float(product.price),
+        "entry_date": str(product.entry_date),
+        "quantity": product.quantity
+    }
+
+    cache_manager.store_data(
+        cache_key,
+        json.dumps(product_data),
+        time_to_live=300
+    )
+
+    return jsonify(product=product_data), 200
 
 
 @app.route("/products/<int:product_id>", methods=["PUT"])
@@ -268,6 +281,8 @@ def update_product(decoded, product_id):
 
     if error:
         return jsonify(error=error), 400
+    
+    cache_manager.delete_data(f"product:{product_id}")
 
     return jsonify(
         product={
@@ -287,6 +302,8 @@ def delete_product(decoded, product_id):
 
     if not deleted:
         return jsonify(error="Product not found"), 404
+    
+    cache_manager.delete_data(f"product:{product_id}")
 
     return jsonify(
         message="Product deleted successfully"
