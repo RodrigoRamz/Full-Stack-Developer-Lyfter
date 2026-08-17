@@ -188,6 +188,7 @@ def create_product(decoded):
         return jsonify(
             error="Invalid product data"
         ), 400
+    cache_manager.delete_data("products")
 
     return jsonify(
         product={
@@ -203,20 +204,33 @@ def create_product(decoded):
 @app.route("/products", methods=["GET"])
 @role_required(jwt_manager, "admin")
 def get_products(decoded):
+    cache_key = "products"
+
+    cached_products = cache_manager.get_data(cache_key)
+
+    if cached_products is not None:
+        return jsonify(products=json.loads(cached_products)), 200
+
     products = product_repository.get_all_products()
 
-    return jsonify(
-        products=[
-            {
-                "id": product.id,
-                "name": product.name,
-                "price": float(product.price),
-                "entry_date": str(product.entry_date),
-                "quantity": product.quantity
-            }
-            for product in products
-        ]
-    ), 200
+    products_data = [
+        {
+            "id": product.id,
+            "name": product.name,
+            "price": float(product.price),
+            "entry_date": str(product.entry_date),
+            "quantity": product.quantity
+        }
+        for product in products
+    ]
+
+    cache_manager.store_data(
+        cache_key,
+        json.dumps(products_data),
+        time_to_live=300
+    )
+
+    return jsonify(products=products_data), 200
 
 @app.route("/products/<int:product_id>", methods=["GET"])
 @role_required(jwt_manager, "admin")
@@ -281,8 +295,8 @@ def update_product(decoded, product_id):
 
     if error:
         return jsonify(error=error), 400
-    
     cache_manager.delete_data(f"product:{product_id}")
+    cache_manager.delete_data("products")
 
     return jsonify(
         product={
@@ -304,6 +318,7 @@ def delete_product(decoded, product_id):
         return jsonify(error="Product not found"), 404
     
     cache_manager.delete_data(f"product:{product_id}")
+    cache_manager.delete_data("products")
 
     return jsonify(
         message="Product deleted successfully"
