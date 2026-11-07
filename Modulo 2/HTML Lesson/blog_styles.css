@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+article {
+  width: 70%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+article p {
+  text-align: justify;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+h1 {
+  font-family: Georgia, serif;
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-top: 40px;
+}
+
+.subtitle {
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  color: #555;
+}
+
+.article-info {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+article img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
