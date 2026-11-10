@@ -1,4 +1,13 @@
+const fs = require("fs");
+const path = require("path");
+
+
 function checkNumber(number, evenCallback, oddCallback) {
+    if (!Number.isInteger(number)) {
+        console.log("Please enter a valid integer.");
+        return;
+    }
+
     if (number % 2 === 0) {
         evenCallback();
     } else {
@@ -16,16 +25,19 @@ function showOdd() {
 
 checkNumber(10, showEven, showOdd);
 checkNumber(7, showEven, showOdd);
+checkNumber(7.5, showEven, showOdd);
+checkNumber("8", showEven, showOdd);
 
-const fs = require("fs");
+const file1Path = path.join(__dirname, "first_file.txt");
+const file2Path = path.join(__dirname, "second_file.txt");
 
-fs.readFile("first_file.txt", "utf8", (error, data1) => {
+fs.readFile(file1Path, "utf8", (error, data1) => {
     if (error) {
         console.log(error);
         return;
     }
 
-    fs.readFile("second_file.txt", "utf8", (error, data2) => {
+    fs.readFile(file2Path, "utf8", (error, data2) => {
         if (error) {
             console.log(error);
             return;
@@ -36,9 +48,8 @@ fs.readFile("first_file.txt", "utf8", (error, data1) => {
 
         const repeatedWords = words1.filter((word) => {
             return words2.includes(word);
-});
+        });
 
         console.log(repeatedWords.join(" "));
-        
     });
 });
